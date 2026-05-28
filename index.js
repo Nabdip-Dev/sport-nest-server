@@ -39,7 +39,6 @@ async function run() {
         })
 
 
-
         app.post('/destination', async (req, res) => {
             const destinationData = req.body
             console.log(destinationData)
@@ -49,11 +48,34 @@ async function run() {
         })
 
 
-
         app.get("/destination/:id", async (req, res) => {
             const { id } = req.params
 
-            const result = await destinationCollection.findOne({ _id: new ObjectId(id)})
+            const result = await destinationCollection.findOne({ _id: new ObjectId(id) })
+
+            res.json(result)
+        })
+
+
+        app.patch("/destination/:id", async (req, res)  => {
+            const {id} =req.params
+            const updateData = req.body
+
+            const result = await destinationCollection.updateOne(
+                {_id: new ObjectId(id)},
+                {$set: updateData}
+            )
+
+            res.json(result)
+        })
+
+
+        app.delete("/destination/:id", async (req, res)  => {
+            const {id} =req.params
+
+            const result = await destinationCollection.deleteOne(
+                {_id: new ObjectId(id)}
+            )
 
             res.json(result)
         })
