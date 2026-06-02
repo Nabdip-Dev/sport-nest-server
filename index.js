@@ -81,6 +81,17 @@ async function run() {
             res.json(result)
         })
 
+        
+        app.delete("/booking/:id", async (req, res) => {
+            const { id } = req.params;
+
+            const result = await bookingCollection.deleteOne({
+                _id: new ObjectId(id),
+            });
+
+            res.json(result);
+        });
+
 
         app.get("/booking/:userId", async (req, res) => {
             const { userId } = req.params;
@@ -89,7 +100,7 @@ async function run() {
 
             res.json(result);
         });
-        
+
 
         app.post('/booking', async (req, res) => {
             const dataBooking = req.body
