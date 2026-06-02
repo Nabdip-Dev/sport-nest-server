@@ -30,6 +30,7 @@ async function run() {
 
         const db = client.db("sportnest")
         const destinationCollection = db.collection("destination")
+        const bookingCollection = db.collection("bookings")
 
 
 
@@ -57,29 +58,45 @@ async function run() {
         })
 
 
-        app.patch("/destination/:id", async (req, res)  => {
-            const {id} =req.params
+        app.patch("/destination/:id", async (req, res) => {
+            const { id } = req.params
             const updateData = req.body
 
             const result = await destinationCollection.updateOne(
-                {_id: new ObjectId(id)},
-                {$set: updateData}
+                { _id: new ObjectId(id) },
+                { $set: updateData }
             )
 
             res.json(result)
         })
 
 
-        app.delete("/destination/:id", async (req, res)  => {
-            const {id} =req.params
+        app.delete("/destination/:id", async (req, res) => {
+            const { id } = req.params
 
             const result = await destinationCollection.deleteOne(
-                {_id: new ObjectId(id)}
+                { _id: new ObjectId(id) }
             )
 
             res.json(result)
         })
 
+
+        app.get("/booking/:userId", async (req, res) => {
+            const { userId } = req.params;
+
+            const result = await bookingCollection.find({ userId: userId }).toArray();
+
+            res.json(result);
+        });
+        
+
+        app.post('/booking', async (req, res) => {
+            const dataBooking = req.body
+            const result = await bookingCollection.insertOne(dataBooking)
+
+            res.json(result)
+        })
 
         await client.db("admin").command({ ping: 1 });
         console.log("Pinged your deployment. You successfully connected to MongoDB!");
