@@ -5,6 +5,7 @@ const express = require('express')
 const dotenv = require('dotenv')
 const cors = require('cors')
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
+const { CLIENT_RENEG_LIMIT } = require("node:tls");
 dotenv.config()
 
 const uri = process.env.MONGODB_URI;
@@ -23,6 +24,23 @@ const client = new MongoClient(uri, {
         deprecationErrors: true,
     }
 });
+
+const verifyToken = (req, res, next) => {
+    const authHeader = req.headers.authorization;
+     console.log("Authorization Header:", authHeader);
+    if (!authHeader) {
+        return res.status(401).json({ message: "Unauthorized" });
+    }
+
+    const token = authHeader.split(" ")[1];
+
+    if (!token) {
+        return res.status(401).json({ message: "Unauthorized" });
+    }
+
+    next();
+};
+
 
 async function run() {
     try {
@@ -49,7 +67,7 @@ async function run() {
         })
 
 
-        app.get("/destination/:id", async (req, res) => {
+        app.get("/destination/:id", verifyToken, async (req, res) => {
             const { id } = req.params
 
             const result = await destinationCollection.findOne({ _id: new ObjectId(id) })
@@ -81,7 +99,7 @@ async function run() {
             res.json(result)
         })
 
-        
+
         app.delete("/booking/:id", async (req, res) => {
             const { id } = req.params;
 
