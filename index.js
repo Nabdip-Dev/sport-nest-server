@@ -85,7 +85,7 @@ async function run() {
         })
 
 
-        app.post('/destination', async (req, res) => {
+        app.post('/destination', verifyToken, async (req, res) => {
             const destinationData = req.body
             console.log(destinationData)
             const result = await destinationCollection.insertOne(destinationData)
@@ -103,7 +103,7 @@ async function run() {
         })
 
 
-        app.patch("/destination/:id", async (req, res) => {
+        app.patch("/destination/:id", verifyToken, async (req, res) => {
             const { id } = req.params
             const updateData = req.body
 
@@ -116,7 +116,7 @@ async function run() {
         })
 
 
-        app.delete("/destination/:id", async (req, res) => {
+        app.delete("/destination/:id", verifyToken, async (req, res) => {
             const { id } = req.params
 
             const result = await destinationCollection.deleteOne(
@@ -127,7 +127,7 @@ async function run() {
         })
 
 
-        app.delete("/booking/:id", async (req, res) => {
+        app.delete("/booking/:id", verifyToken, async (req, res) => {
             const { id } = req.params;
 
             const result = await bookingCollection.deleteOne({
@@ -138,7 +138,7 @@ async function run() {
         });
 
 
-        app.get("/booking/:userId", async (req, res) => {
+        app.get("/booking/:userId", verifyToken, async (req, res) => {
             const { userId } = req.params;
 
             const result = await bookingCollection.find({ userId: userId }).toArray();
@@ -147,7 +147,7 @@ async function run() {
         });
 
 
-        app.post('/booking', async (req, res) => {
+        app.post('/booking', verifyToken, async (req, res) => {
             const dataBooking = req.body
             const result = await bookingCollection.insertOne(dataBooking)
 
