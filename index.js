@@ -84,14 +84,24 @@ async function run() {
             res.json(result);
         })
 
-
         app.post('/destination', verifyToken, async (req, res) => {
-            const destinationData = req.body
-            console.log(destinationData)
-            const result = await destinationCollection.insertOne(destinationData)
+            const destinationData = req.body;
 
-            res.json(result)
-        })
+            destinationData.userId = req.user.sub; // অথবা req.user.id
+
+            const result = await destinationCollection.insertOne(destinationData);
+
+            res.json(result);
+        });
+
+
+        // app.post('/destination', verifyToken, async (req, res) => {
+        //     const destinationData = req.body
+        //     console.log(destinationData)
+        //     const result = await destinationCollection.insertOne(destinationData)
+
+        //     res.json(result)
+        // })
 
 
         app.get("/destination/:id", verifyToken, async (req, res) => {
@@ -153,6 +163,17 @@ async function run() {
 
             res.json(result)
         })
+
+        app.get("/my-facilities", verifyToken, async (req, res) => {
+
+            const result = await destinationCollection
+                .find({
+                    userId: req.user.sub
+                })
+                .toArray();
+
+            res.json(result);
+        });
 
         await client.db("admin").command({ ping: 1 });
         console.log("Pinged your deployment. You successfully connected to MongoDB!");
